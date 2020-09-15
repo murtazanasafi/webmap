@@ -12,7 +12,7 @@ def view_map(request):
     return render(request, template_name='geocoder.html')
 
 def pasap_map(request):
-    return render(request, template_name='pasap.html')
+    return render(request, template_name='psap.html')
 
 def homepage(request):
     return render(request, template_name='homepage.html')
