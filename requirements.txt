@@ -1,0 +1,7 @@
+django
+pillow
+django-crispy-forms
+django-pagedown
+django-taggit
+python-dotenv
+mysqlclient

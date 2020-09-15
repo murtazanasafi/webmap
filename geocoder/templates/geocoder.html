@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+
+        <title>Nasafi Web GIS</title>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <!-- Include Leaflet CSS file in the head section of your document: -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""/>
+
+        <!-- Make sure you put this AFTER Leaflet's CSS -->
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+
+        <!-- jQuery CDN -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+         <!-- Load Esri Leaflet from CDN -->
+  <script src="https://unpkg.com/esri-leaflet@2.5.0/dist/esri-leaflet.js"
+  integrity="sha512-ucw7Grpc+iEQZa711gcjgMBnmd9qju1CICsRaryvX7HJklK0pGl/prxKvtHwpgm5ZHdvAil7YPxI1oWPOWK3UQ=="
+  crossorigin=""></script>
+
+
+        <!-- Load Esri Leaflet Geocoder from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.3.3/dist/esri-leaflet-geocoder.css"
+  integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g=="
+  crossorigin="">
+<script src="https://unpkg.com/esri-leaflet-geocoder@2.3.3/dist/esri-leaflet-geocoder.js"
+  integrity="sha512-HrFUyCEtIpxZloTgEKKMq4RFYhxjJkCiF5sDxuAokklOeZ68U2NPfh4MFtyIVWlsKtVbK5GD2/JzFyAfvT5ejA=="
+  crossorigin=""></script>
+
+
+
+        <style>
+            #header {
+                height: 75px;
+                background-color: darkgoldenrod;
+            }
+            #mapdiv {
+                height: 850px;
+                background-color: black;
+            }
+            #side_panel {
+                height: 850px;
+                background-color: beige;
+            }
+            #footer {
+                height: 75px;
+                background-color: darkgray;
+            }
+
+            #basemaps-wrapper {
+                position: absolute;
+                top: 100px;
+                right: 10px;
+                z-index: 400;
+                background: white;
+                padding: 10px;
+            }
+            #basemaps {
+                margin-bottom: 5px;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div id="header" class="col-md-12">
+            <h1 class="text-center">Nasafi Geocoder Website</h1>
+        </div>
+        <div id="side_panel" class="col-md-3">
+            <h1 class="text-center">Location</h1>
+            <h6 class="text-center">Click on the map to get the location</h6>
+            <button id="clear_layer" class="col-md-12 btn btn-danger"> Clear Markers</button>
+            <p id="active_coords"></p>
+            <div id='click_results'>
+                <h2>Your Click Results: </h2>
+            </div>
+        </div>
+
+
+        </div>
+        <div id="mapdiv" class="col-md-9"> </div>
+        <div id="basemaps-wrapper" class="leaflet-bar">
+            <p class="text-center">Basemaps</p>
+            <select id="basemaps">
+            <option value="Topographic">Topographic</option>
+            <option value="Streets">Streets</option>
+            <option value="NationalGeographic">National Geographic</option>
+            <option value="Oceans">Oceans</option>
+            <option value="Gray">Gray</option>
+            <option value="DarkGray">Dark Gray</option>
+            <option value="Imagery">Imagery</option>
+            <option value="ImageryClarity">Imagery (Clarity)</option>
+            <option value="ImageryFirefly">Imagery (Firefly)</option>
+            <option value="ShadedRelief">Shaded Relief</option>
+            <option value="Physical">Physical</option>
+            </select>
+        </div>
+
+        <div id="footer" class="col-md-12">
+            <h4 id='map_coords' class="text-center">Nasafi's Webmap Demo</h4>
+            <h4 class="text-center">&copy;2020 <a href="https:nasafiWebMaps.pythonanywhere.com">Murtaza Nasafi</a></h4>
+        </div>
+
+
+        <script>
+
+            var myMap = L.map('mapdiv')
+            myMap.setView([38.576303, -121.493168], 14) //(>90 then longtidude)
+
+            var layer = L.esri.basemapLayer('Topographic').addTo(myMap);
+            var layerLabels;
+
+
+            function setBasemap (basemap) {
+                if (layer) {
+                myMap.removeLayer(layer);
+                }
+
+                layer = L.esri.basemapLayer(basemap);
+
+                myMap.addLayer(layer);
+
+                if (layerLabels) {
+                    myMap.removeLayer(layerLabels);
+                }
+
+                if (
+                basemap === 'ShadedRelief' ||
+                basemap === 'Oceans' ||
+                basemap === 'Gray' ||
+                basemap === 'DarkGray' ||
+                basemap === 'Terrain'
+                ) {
+                layerLabels = L.esri.basemapLayer(basemap + 'Labels');
+                myMap.addLayer(layerLabels);
+                } else if (basemap.includes('Imagery')) {
+                layerLabels = L.esri.basemapLayer('ImageryLabels');
+                myMap.addLayer(layerLabels);
+                }
+            }
+
+            document
+            .querySelector('#basemaps')
+            .addEventListener('change', function (e) {
+            var basemap = e.target.value;
+            setBasemap(basemap);
+                });
+
+
+
+
+            // reverse geocode
+
+            var geocodeService = L.esri.Geocoding.geocodeService();
+
+
+            function removeAllChildNodes(parent){
+                while(parent.firstChild){
+                    parent.removeChild(parent.firstChild);
+                }
+            }
+
+            myMap.on('mousemove', function(e){
+                var str = 'Lat: '+ e.latlng.lat.toFixed(6) + ' Long: '+ e.latlng.lng.toFixed(6) + " Zoom Level: " + myMap.getZoom();
+                $('#active_coords').html(str);
+            });
+
+            myMap.on('click', function(e){
+                geocodeService.reverse().latlng(e.latlng).run(function (error, result) {
+
+                    if (error) {
+                        return;
+                    }
+                        var layerGroup  = L.layerGroup().addTo(myMap);
+                        var marker = L.marker(result.latlng).addTo(myMap);
+                        marker.bindPopup(result.address.Match_addr).openPopup();
+                        marker.addTo(layerGroup);
+
+                        var coord = e.latlng.toString().replace(/^LatLng/, '').split(',');
+                        var node = document.createElement('p')
+                        var textnode = document.createTextNode(`Lat/Long: (${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)})
+                        -- The address is : ${result.address.Match_addr}`);
+                        node.appendChild(textnode);
+                        document.getElementById('click_results').appendChild(node);
+
+
+                        $('#clear_layer').click(function(){
+                                var nodes =  document.getElementById('click_results');
+                                removeAllChildNodes(nodes);
+                                layerGroup.clearLayers();
+
+                                console.log('clicked')
+                                });
+
+                        });
+
+
+
+                });
+
+            // address search box
+            var searchControl = L.esri.Geocoding.geosearch().addTo(myMap);
+
+            var results = L.layerGroup().addTo(myMap);
+
+            searchControl.on('results', function (data) {
+
+                for (var i = data.results.length - 1; i >= 0; i--) {
+                results.addLayer(L.marker(data.results[i].latlng));
+                }
+            });
+
+
+            $('#clear_layer').click(function(e){
+                results.clearLayers();
+
+
+            });
+
+
+            //basemaps
+
+
+
+
+
+
+
+
+        </script>
+
+
+
+    </body>
+
+
+
+</html>
+
+
+
