@@ -10,3 +10,9 @@ def redirect_view(request):
 
 def view_map(request):
     return render(request, template_name='geocoder.html')
+
+def pasap_map(request):
+    return render(request, template_name='pasap.html')
+
+def homepage(request):
+    return render(request, template_name='homepage.html')
